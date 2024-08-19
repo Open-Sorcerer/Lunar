@@ -21,7 +21,7 @@ const CONNECTION = new Connection(
 );
 
 const BRIDGE_ACCOUNT = new PublicKey(
-  "BGfybQ2uFGPmCscCPAgJtBFXDWc5GNqzymSq3AAo6Nvi"
+  "EBefTt9xXvoixAousPZSkYm78j71yKRWfrXwy7duw84L"
 );
 
 export const GET = async (req: Request) => {
