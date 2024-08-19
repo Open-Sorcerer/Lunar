@@ -4,56 +4,25 @@ import {
   createPostResponse,
   ActionGetResponse,
   ActionPostRequest,
-  verifySignatureInfoForIdentity,
+  MEMO_PROGRAM_ID,
 } from "@solana/actions";
 import {
   Connection,
   PublicKey,
-  TransactionMessage,
-  VersionedTransaction,
-  AddressLookupTableAccount,
   Transaction,
-  ComputeBudgetProgram,
   SystemProgram,
+  LAMPORTS_PER_SOL,
+  TransactionInstruction,
 } from "@solana/web3.js";
-import axios from "axios";
 
 const CONNECTION = new Connection(
-  "https://mainnet.helius-rpc.com/?api-key=0769fcf3-0514-4eee-95e7-485431ab941e",
+  "https://devnet.helius-rpc.com/?api-key=0769fcf3-0514-4eee-95e7-485431ab941e",
   { commitment: "confirmed" }
 );
 
-const JUPITER_ENDPOINT = "https://quote-api.jup.ag/v6";
-const SLIPPAGE_BPS = 50;
-const PRIORITY_FEE_LAMPORTS = 20_000;
-
-const tokenAddresses = {
-  sol: "So11111111111111111111111111111111111111112",
-  usdc: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  jitoSol: "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn",
-  mSol: "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So",
-  bSol: "bSo13r4TkiE4KumL71LsHTPpL2euBYLFx6h9HP3piy1",
-};
-
-interface SwapParams {
-  toToken: keyof typeof tokenAddresses;
-  percentage: number;
-}
-
-interface BatchSwapParams {
-  totalUsdcAmount: number;
-  swaps: SwapParams[];
-}
-
-const lstBasket: BatchSwapParams = {
-  totalUsdcAmount: 1_000_000, // 1 USDC = 1,000,000 lamports
-  swaps: [
-    { toToken: "sol", percentage: 25 },
-    { toToken: "jitoSol", percentage: 25 },
-    { toToken: "mSol", percentage: 25 },
-    { toToken: "bSol", percentage: 25 },
-  ],
-};
+const BRIDGE_ACCOUNT = new PublicKey(
+  "BGfybQ2uFGPmCscCPAgJtBFXDWc5GNqzymSq3AAo6Nvi"
+);
 
 export const GET = async (req: Request) => {
   try {
@@ -101,24 +70,6 @@ export const GET = async (req: Request) => {
 
 export const OPTIONS = GET;
 
-async function getRawTransaction(
-  encodedTransaction: string
-): Promise<Transaction | VersionedTransaction> {
-  let recoveredTransaction: Transaction | VersionedTransaction;
-  try {
-    recoveredTransaction = Transaction.from(
-      Buffer.from(encodedTransaction, "base64")
-    );
-    const latestBlockhash = await CONNECTION.getLatestBlockhash();
-    recoveredTransaction.recentBlockhash = latestBlockhash.blockhash;
-  } catch (error) {
-    recoveredTransaction = VersionedTransaction.deserialize(
-      new Uint8Array(Buffer.from(encodedTransaction, "base64"))
-    );
-  }
-  return recoveredTransaction;
-}
-
 export const POST = async (req: Request) => {
   try {
     const requestUrl = new URL(req.url);
@@ -142,18 +93,42 @@ export const POST = async (req: Request) => {
       });
     }
 
-    const versionedTransaction = new VersionedTransaction();
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: new PublicKey(account),
+        toPubkey: new PublicKey(BRIDGE_ACCOUNT),
+        lamports: LAMPORTS_PER_SOL * parseFloat(`${amountInSOL}`),
+      })
+    );
 
-    console.log(versionedTransaction.serialize());
+    const messageToAddInMemo =
+      "ReceiverAddress: " +
+      account.toBase58() +
+      ", Amount: " +
+      amountInSOL * LAMPORTS_PER_SOL;
 
-    const actionResponse: ActionPostResponse = {
-      transaction: uint8ArrayToBase64(versionedTransaction.serialize()),
-      message: `Swapped`,
-    };
+    const memoInstruction = new TransactionInstruction({
+      keys: [{ pubkey: account, isSigner: true, isWritable: true }],
+      programId: new PublicKey(MEMO_PROGRAM_ID),
+      data: Buffer.from(messageToAddInMemo, "utf-8"),
+    });
 
-    // return res.json(actionResponse);
+    transaction.add(memoInstruction);
 
-    return Response.json(actionResponse, {
+    transaction.feePayer = new PublicKey(account);
+    const latestBlockhash = await CONNECTION.getLatestBlockhash();
+
+    transaction!.recentBlockhash = latestBlockhash.blockhash;
+    transaction!.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
+
+    const payload: ActionPostResponse = await createPostResponse({
+      fields: {
+        transaction,
+        message: "Bridge to Eclipse Devnet",
+      },
+    });
+
+    return Response.json(payload, {
       headers: ACTIONS_CORS_HEADERS,
     });
   } catch (err) {
@@ -165,8 +140,4 @@ export const POST = async (req: Request) => {
       headers: ACTIONS_CORS_HEADERS,
     });
   }
-};
-
-const uint8ArrayToBase64 = (uint8Array: Uint8Array): string => {
-  return Buffer.from(uint8Array).toString("base64");
 };
