@@ -34,7 +34,7 @@ export const GET = async (req: Request) => {
 
     const payload: ActionGetResponse = {
       title: "Bridge to Eclipse Devnet",
-      icon: new URL("/title.jpg", requestUrl.origin).toString(),
+      icon: new URL("/next.svg", requestUrl.origin).toString(),
       description: "Bridge your assets to the Eclipse Devnet",
       label: "Bridge",
       links: {
