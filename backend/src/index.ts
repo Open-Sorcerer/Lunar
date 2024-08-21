@@ -9,13 +9,13 @@ dotenv.config()
 const POOL_ADDRESS = new PublicKey("61vGBCJ5DTDax5e5p1f7f96PTzDC78GUggsUtaicdH81")
 
 const KEYPAIR = Keypair.fromSecretKey(
-  bs58.decode(process.env.KEYPAIR_1)
+  bs58.decode(process.env.KEYPAIR_1!)
 );
 
 const TX_RETRY_INTERVAL = 2000;
 
-const solanaConnection = new Connection(process.env.RPC_ENDPOINT_SOLANA)
-const eclipseConnection = new Connection(process.env.RPC_ENDPOINT_ECLIPSE)
+const solanaConnection = new Connection(process.env.RPC_ENDPOINT_SOLANA!)
+const eclipseConnection = new Connection(process.env.RPC_ENDPOINT_ECLIPSE!)
 
 async function main() {
 
@@ -35,9 +35,9 @@ async function main() {
         })
         .find(item => item !== null);
 
-      console.log(parsedData);
+      if (!parsedData || (!parsedData.amount && !parsedData.to)) return
 
-      if (!parsedData.amount && !parsedData.to) return
+      console.log(parsedData);
 
       const tx = new Transaction();
       tx.add(
@@ -74,7 +74,7 @@ async function main() {
       tx.sign(KEYPAIR)
 
       const signatureRaw = tx.signatures[0].signature;
-      const signature = bs58.encode(signatureRaw);
+      const signature = bs58.encode(signatureRaw!);
 
       console.log(signature);
 
