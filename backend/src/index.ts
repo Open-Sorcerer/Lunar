@@ -12,8 +12,6 @@ const KEYPAIR = Keypair.fromSecretKey(
   bs58.decode(process.env.KEYPAIR_1!)
 );
 
-const TX_RETRY_INTERVAL = 2000;
-
 const solanaConnection = new Connection(process.env.RPC_ENDPOINT_SOLANA!)
 const eclipseConnection = new Connection(process.env.RPC_ENDPOINT_ECLIPSE!)
 
@@ -47,14 +45,6 @@ async function main() {
           lamports: parsedData.amount,
         })
       );
-      // tx.add(
-      //   ComputeBudgetProgram.setComputeUnitLimit({
-      //     units: 150000,
-      //   }),
-      //   ComputeBudgetProgram.setComputeUnitPrice({
-      //     microLamports: 5000,
-      //   })
-      // );
 
       const messageToAddInMemo =
         "Bridged via Lunar"
@@ -79,56 +69,6 @@ async function main() {
       console.log(signature);
 
       const confirmedTx = await sendAndConfirmRawTransaction(eclipseConnection, tx.serialize())
-
-      // const resultPromise = eclipseConnection.confirmTransaction(
-      //   {
-      //     signature,
-      //     blockhash: tx.recentBlockhash,
-      //     lastValidBlockHeight: tx.lastValidBlockHeight,
-      //   },
-      //   "confirmed"
-      // );
-
-      // const txStart = Date.now();
-      // const sendTxResult = await eclipseConnection.sendRawTransaction(
-      //   tx.serialize(),
-      //   {
-      //     skipPreflight: true,
-      //     maxRetries: 0,
-      //   }
-      // );
-
-      // let confirmedTransaction = null;
-      // let txSendAttempts = 1;
-
-      // while (!confirmedTransaction) {
-
-      //   confirmedTransaction = await Promise.race([
-      //     resultPromise,
-      //     new Promise((resolve) =>
-      //       setTimeout(() => {
-      //         resolve(null);
-      //       }, TX_RETRY_INTERVAL)
-      //     ),
-      //   ]);
-      //   if (confirmedTransaction) {
-      //     break;
-      //   }
-
-      //   console.log(
-      //     `${new Date().toISOString()} Tx not confirmed after ${TX_RETRY_INTERVAL * txSendAttempts++}ms, resending`
-      //   );
-
-      //   await eclipseConnection.sendRawTransaction(tx.serialize(), {
-      //     skipPreflight: true,
-      //     maxRetries: 0,
-      //   });
-      // }
-
-      // if (!confirmedTransaction) {
-      //   console.log(`${new Date().toISOString()} Transaction failed`);
-      //   return;
-      // }
 
       console.log(`${new Date().toISOString()} Transaction successful on Eclipse`);
       console.log(`${new Date().toISOString()} Explorer URL: https://explorer.dev.eclipsenetwork.xyz/tx/${signature}?cluster=devnet`);
