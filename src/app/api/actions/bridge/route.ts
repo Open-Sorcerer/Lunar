@@ -118,10 +118,18 @@ export const POST = async (req: Request) => {
     transaction!.recentBlockhash = latestBlockhash.blockhash;
     transaction!.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
 
+    // "https://explorer.eclipse.xyz/address/" +
+    //       account.toBase58() +
+    //       "?cluster=devnet",
+
     const payload: ActionPostResponse = await createPostResponse({
       fields: {
         transaction,
-        message: "Bridge to Eclipse Devnet",
+        message:
+          "You have successfully bridged your assets," + // create a hyperlink to the transaction
+          "[View Transaction](https://explorer.eclipse.xyz/address/" +
+          account.toBase58() +
+          "?cluster=devnet)",
       },
     });
 
