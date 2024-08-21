@@ -1,4 +1,4 @@
-import { Connection, Keypair, PublicKey, sendAndConfirmRawTransaction, Signer, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js"
+import { Connection, Keypair, PublicKey, sendAndConfirmRawTransaction, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js"
 import dotenv from "dotenv"
 import bs58 from "bs58";
 
@@ -12,12 +12,20 @@ const KEYPAIR = Keypair.fromSecretKey(
   bs58.decode(process.env.KEYPAIR_1!)
 );
 
-const solanaConnection = new Connection(process.env.RPC_ENDPOINT_SOLANA!)
-const eclipseConnection = new Connection(process.env.RPC_ENDPOINT_ECLIPSE!)
+const solanaRpcConnection = new Connection(process.env.RPC_ENDPOINT_SOLANA!)
+const eclipseRpcConnection = new Connection(process.env.RPC_ENDPOINT_ECLIPSE!)
 
 async function main() {
 
-  solanaConnection.onLogs(POOL_ADDRESS, async (logData) => {
+  const messageToAddInMemo =
+    "Bridged via Lunar"
+  const memoInstruction = new TransactionInstruction({
+    keys: [{ pubkey: KEYPAIR.publicKey, isSigner: true, isWritable: true }],
+    programId: new PublicKey(MEMO_PROGRAM_ID),
+    data: Buffer.from(messageToAddInMemo, "utf-8"),
+  });
+
+  solanaRpcConnection.onLogs(POOL_ADDRESS, async (logData) => {
     if (logData.err) return
     try {
       const parsedData = logData.logs
@@ -37,8 +45,8 @@ async function main() {
 
       console.log(parsedData);
 
-      const tx = new Transaction();
-      tx.add(
+      const transaction = new Transaction();
+      transaction.add(
         SystemProgram.transfer({
           fromPubkey: KEYPAIR.publicKey,
           toPubkey: new PublicKey(parsedData.to),
@@ -46,35 +54,26 @@ async function main() {
         })
       );
 
-      const messageToAddInMemo =
-        "Bridged via Lunar"
-      const memoInstruction = new TransactionInstruction({
-        keys: [{ pubkey: KEYPAIR.publicKey, isSigner: true, isWritable: true }],
-        programId: new PublicKey(MEMO_PROGRAM_ID),
-        data: Buffer.from(messageToAddInMemo, "utf-8"),
-      });
+      transaction.add(memoInstruction);
 
-      tx.add(memoInstruction);
+      const blockhashResult = await eclipseRpcConnection.getLatestBlockhash("finalized")
 
-      const blockhashResult = await eclipseConnection.getLatestBlockhash("finalized")
+      transaction.recentBlockhash = blockhashResult.blockhash
+      transaction.lastValidBlockHeight = blockhashResult.lastValidBlockHeight
 
-      tx.recentBlockhash = blockhashResult.blockhash
-      tx.lastValidBlockHeight = blockhashResult.lastValidBlockHeight
+      transaction.sign(KEYPAIR)
 
-      tx.sign(KEYPAIR)
+      const signatureRaw = transaction.signatures[0].signature;
+      const signatureString = bs58.encode(signatureRaw!);
 
-      const signatureRaw = tx.signatures[0].signature;
-      const signature = bs58.encode(signatureRaw!);
+      console.log(signatureString);
 
-      console.log(signature);
-
-      const confirmedTx = await sendAndConfirmRawTransaction(eclipseConnection, tx.serialize())
+      const confirmedTx = await sendAndConfirmRawTransaction(eclipseRpcConnection, transaction.serialize())
 
       console.log(`${new Date().toISOString()} Transaction successful on Eclipse`);
-      console.log(`${new Date().toISOString()} Explorer URL: https://explorer.dev.eclipsenetwork.xyz/tx/${signature}?cluster=devnet`);
+      console.log(`${new Date().toISOString()} Explorer URL: https://explorer.dev.eclipsenetwork.xyz/tx/${signatureString}?cluster=devnet`);
     } catch (e) {
       console.log(`ERROR: ${e}`);
-
     }
   });
 
