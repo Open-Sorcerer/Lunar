@@ -102,10 +102,7 @@ export const POST = async (req: Request) => {
     );
 
     const messageToAddInMemo =
-      "ReceiverAddress: " +
-      account.toBase58() +
-      ", Amount: " +
-      amountInSOL * LAMPORTS_PER_SOL;
+      "to:" + account.toBase58() + ",amount:" + amountInSOL * LAMPORTS_PER_SOL;
 
     const memoInstruction = new TransactionInstruction({
       keys: [{ pubkey: account, isSigner: true, isWritable: true }],
