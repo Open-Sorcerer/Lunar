@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Lunar: Simplifying Bridging to Eclipse
 
-## Getting Started
+<p align="center">
+  <img src="./public/title.png" alt="Lunar Logo" width="200" />
+</p>
 
-First, run the development server:
+Lunar is an innovative bridge that streamlines the process of transferring SOL tokens from Solana to Eclipse. By leveraging Solana's Blockchain Links (blinks), Lunar provides a seamless and user-friendly experience for newcomers and experienced users alike.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Why Lunar?
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Lunar was created with one primary goal: to make onboarding to Eclipse as simple and intuitive as possible. Here's how Lunar achieves this:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **One-Click Bridging**: Transfer your SOL to Eclipse with just a few clicks, eliminating complex multi-step processes.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+2. **Familiar Interface**: Utilizes Solana's blink technology, providing a consistent experience for Solana users.
 
-## Learn More
+3. **No New Wallets Required**: Use your existing Solana wallet to bridge assets, reducing friction and potential security risks.
 
-To learn more about Next.js, take a look at the following resources:
+4. **Instant Feedback**: Receive immediate confirmation of your bridge transaction, enhancing user confidence.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. **Transparent Process**: Clear, step-by-step guidance throughout the bridging process, making it accessible even to blockchain newcomers.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Features
 
-## Deploy on Vercel
+- Seamless SOL transfer from Solana to Eclipse
+- User-friendly blink interface
+- Secure transaction handling with cross-chain verification
+- Real-time transaction status updates
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## The Future of Lunar
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+We're committed to continually improving Lunar to make the bridge between Solana and Eclipse even more seamless. Stay tuned for upcoming features like:
+
+- Multi-token support
+- Advanced transaction tracking
+- Integration with popular Solana dApps
+
+Join us in making the transition to Eclipse as smooth as possible for everyone!
+
+---
+
+Lunar: Your gateway to Eclipse - Simple, Secure, Seamless.
