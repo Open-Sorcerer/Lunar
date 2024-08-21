@@ -27,6 +27,10 @@ Lunar was created with one primary goal: to make onboarding to Eclipse as simple
 - Secure transaction handling with cross-chain verification
 - Real-time transaction status updates
 
+<p align="center">
+  <img src="./public/image.png" alt="Lunar Bridge" width="600" />
+</p>
+
 ## The Future of Lunar
 
 We're committed to continually improving Lunar to make the bridge between Solana and Eclipse even more seamless. Stay tuned for upcoming features like:
