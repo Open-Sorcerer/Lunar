@@ -1,4 +1,4 @@
-# Lunar: Simplifying Bridging to Eclipse
+# Lunar: Your gateway to Eclipse - Simple, Secure, Seamless.
 
 <p align="center">
   <img src="./public/title.png" alt="Lunar Logo" width="200" />
@@ -27,6 +27,16 @@ Lunar was created with one primary goal: to make onboarding to Eclipse as simple
 - Secure transaction handling with cross-chain verification
 - Real-time transaction status updates
 
+# Try it out now!
+
+- Visit the [Blink](https://dial.to/developer?url=https%3A%2F%2Flunar-bridge.vercel.app%2Fapi%2Factions%2Fbridge&cluster=devnet)
+- Make sure your wallet is on Solana Devnet and has some SOL
+- Connect your wallet
+- Add the amount of SOL you want to bridge and click "Bridge SOL"
+- Confirm the transaction in your wallet
+- Sit back and relax while your SOL is bridged to Eclipse
+- Check the status of your transaction on the [Explorer](https://explorer.eclipse.xyz/?cluster=devnet)
+
 <p align="center">
   <img src="./public/image.png" alt="Lunar Bridge" width="600" />
 </p>
@@ -40,7 +50,3 @@ We're committed to continually improving Lunar to make the bridge between Solana
 - Integration with popular Solana dApps
 
 Join us in making the transition to Eclipse as smooth as possible for everyone!
-
----
-
-Lunar: Your gateway to Eclipse - Simple, Secure, Seamless.
