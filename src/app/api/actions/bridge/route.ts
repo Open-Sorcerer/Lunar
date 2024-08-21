@@ -33,9 +33,10 @@ export const GET = async (req: Request) => {
     ).toString();
 
     const payload: ActionGetResponse = {
-      title: "Bridge to Eclipse Devnet",
-      icon: new URL("/next.svg", requestUrl.origin).toString(),
-      description: "Bridge your assets to the Eclipse Devnet",
+      title: "Bridge to Eclipse and beyond",
+      icon: new URL("/title.png", requestUrl.origin).toString(),
+      description:
+        "Want to play with the latest SVM on top of Eth? Bridge your assets to Eclipse Devnet now!",
       label: "Bridge",
       links: {
         actions: [
