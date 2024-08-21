@@ -6,6 +6,7 @@ const MEMO_PROGRAM_ID = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"
 
 dotenv.config()
 
+// address of bridge pool on Solana and Eclipse
 const POOL_ADDRESS = new PublicKey("61vGBCJ5DTDax5e5p1f7f96PTzDC78GUggsUtaicdH81")
 
 const KEYPAIR = Keypair.fromSecretKey(
@@ -25,6 +26,7 @@ async function main() {
     data: Buffer.from(messageToAddInMemo, "utf-8"),
   });
 
+  // Listen for deposit transactions on the Solana pool and transfer from the Eclipse pool
   solanaRpcConnection.onLogs(POOL_ADDRESS, async (logData) => {
     if (logData.err) return
     try {
